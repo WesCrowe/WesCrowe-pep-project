@@ -29,13 +29,23 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
     /**
-     * Use the MessageDAO to retrieve all authors.
+     * Use the MessageDAO to retrieve all messages.
      *
      * @return all messages
      */
     public List<Message> getAllMessages() {
         return messageDAO.getAllMessages();
     }
+
+    /**
+     * Use the MessageDAO to retrieve a message with a specific ID.
+     *
+     * @return all messages
+     */
+    public Message getMessageById(Message message) {
+        return messageDAO.getMessageById(message.getMessage_id());
+    }
+
     /**
      * Use the MessageDAO to persist an message. The given Message will not have an id provided.
      *

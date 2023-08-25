@@ -36,16 +36,17 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
 
         //Account handlers
-        app.get("/accounts", this::getAllAccountsHandler);
+        app.get("/accounts", this::getAllAccountsHandler);             //get all accounts
         //app.get("/accounts/{account_id}", this::getAccountByIdHandler);
-        app.post("/accounts", this::postAccountsHandler);
-        app.put("/accounts/{account_id}", this::updateAccountHandler);
+        app.post("/register", this::postAccountHandler);               //create new account
+        app.post("/login", this::loginAccountHandler);                 //login to an account
+        app.put("/accounts/{account_id}", this::updateAccountHandler); //update an account
 
         //Message handlers
-        app.get("/messages", this::getAllMessagesHandler);
-        //app.get("/messages/{message_id}", this::getMessageByIdHandler);
-        app.post("/messages", this::postMessagesHandler);
-        app.put("/messages/{message_id}", this::updateMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);              //get all messages
+        app.get("/messages/{message_id}", this::getMessageByIdHandler); //get a message by ID
+        app.post("/messages", this::postMessagesHandler);               //post messages
+        app.put("/messages/{message_id}", this::updateMessageHandler);  //edit messages
 
         return app;
     }
@@ -70,7 +71,7 @@ public class SocialMediaController {
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.put method.
      */
-    private void postAccountsHandler(Context ctx) throws JsonProcessingException {
+    private void postAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
@@ -78,6 +79,26 @@ public class SocialMediaController {
             ctx.json(mapper.writeValueAsString(addedAccount));
         }else{
             ctx.status(400);
+        }
+    }
+
+    /**
+     * Handler to login to accounts
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.put method.
+     * @throws JsonProcessingException
+     */
+    private void loginAccountHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account loggedAccount = accountService.getAccountByUsernameAndPassword(account);
+
+        if(loggedAccount != null){
+            ctx.json(mapper.writeValueAsString(loggedAccount));
+        }
+        else{
+            ctx.status(401);
         }
     }
 
@@ -116,9 +137,18 @@ public class SocialMediaController {
         ctx.json(messages);
     }
 
-    private void getMessageByIdHandler(Context ctx) {
-        List<Account> accounts = accountService.getAllAccounts();
-        ctx.json(accounts);
+    /**
+     * Handler to retrieve a message based on message_id.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
+     *            be available to this method automatically thanks to the app.put method.
+     */
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message targetMessage = messageService.getMessageById(message);
+
+        ctx.json(mapper.writeValueAsString(targetMessage));
     }
 
     /**

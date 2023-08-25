@@ -3,7 +3,6 @@ package DAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import Model.Account;
 import Util.ConnectionUtil;
 
@@ -17,8 +16,6 @@ import Util.ConnectionUtil;
  * password varchar(255)
  */
 public class AccountDAO {
-    
-
     /**
      * Retrieve all accounts from the account table.
      *
@@ -35,7 +32,7 @@ public class AccountDAO {
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
-                        rs.getString("password"));
+                                              rs.getString("password"));
                 accounts.add(account);
             }
         }catch(SQLException e){
@@ -64,10 +61,39 @@ public class AccountDAO {
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
-                        rs.getString("password"));
+                                              rs.getString("password"));
                 return account;
             }
         }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve a specific account using its username.
+     *
+     * @param id an account ID.
+     */
+    public Account getAccountByUsername(String username){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            //SQL Query
+            String sql = "SELECT * FROM Account WHERE Account.username=?;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            //set the username
+            preparedStatement.setString(1, username);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
+                                              rs.getString("password"));
+                return account;
+            }
+        }
+        catch (SQLException e){
             System.out.println(e.getMessage());
         }
         return null;
@@ -82,25 +108,34 @@ public class AccountDAO {
      */
     public Account insertAccount(Account account){
         Connection connection = ConnectionUtil.getConnection();
-        try {
-            //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
-            //values (two columns total!)
-            String sql = "INSERT INTO Account (username, password) VALUES (?, ?);";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        
+        //username is not blank, 
+        //the password is at least 4 characters long,
+        //and an Account with that username does not already exist.
+        if (account.getUsername() != "" &&
+            account.getPassword().length() > 3 &&
+            getAccountByUsername(account.getUsername()) == null){
+            
+                try {
+                    //SQL Query
+                    String sql = "INSERT INTO Account (username, password) VALUES (?, ?);";
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            //set the username and password
-            preparedStatement.setString(1, account.getUsername());
-            preparedStatement.setString(2, account.getPassword());
+                    //set the username and password
+                    preparedStatement.setString(1, account.getUsername());
+                    preparedStatement.setString(2, account.getPassword());
 
-            preparedStatement.executeUpdate();
-            ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-            if(pkeyResultSet.next()){
-                int generated_account_id = (int) pkeyResultSet.getLong(1);
-                return new Account(generated_account_id, account.getUsername(), account.getPassword());
+                    preparedStatement.executeUpdate();
+                    ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
+                    if(pkeyResultSet.next()){
+                        int generated_account_id = (int) pkeyResultSet.getLong(1);
+                        return new Account(generated_account_id, account.getUsername(), account.getPassword());
+                    }
+                }
+                catch(SQLException e){
+                    System.out.println(e.getMessage());
+                }
             }
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
         return null;
     }
 

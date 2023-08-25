@@ -29,13 +29,36 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
     /**
-     * Use the AccountDAO to retrieve all authors.
+     * Use the AccountDAO to retrieve all accounts.
      *
      * @return all accounts
      */
     public List<Account> getAllAccounts() {
         return accountDAO.getAllAccounts();
     }
+
+    /**
+     * Use the AccountDAO to retrieve an account by username.
+     *
+     * @return account with matching username
+     */
+    public Account getAccountByUsername(Account account) {
+        return accountDAO.getAccountByUsername(account.getUsername());
+    }
+
+    /**
+     * Use the AccountDAO to retrieve an account by username and password
+     *
+     * @return account with matching username and password. If unsuccessful, return null
+     */
+    public Account getAccountByUsernameAndPassword(Account account) {
+        Account acc = getAccountByUsername(account);
+        if (acc.getPassword().compareTo(account.getPassword()) == 0){
+            return acc;
+        }
+        return null;
+    }
+
     /**
      * Use the AccountDAO to persist an account. The given Account will not have an id provided.
      *

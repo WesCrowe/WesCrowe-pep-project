@@ -19,7 +19,12 @@ import Util.ConnectionUtil;
  * foreign key (posted_by) references Account(account_id)
  */
 public class MessageDAO {
-    
+
+    /* TODO: is this dangerous? */
+    AccountDAO accountDAO;
+    public MessageDAO(){
+        this.accountDAO = new AccountDAO();
+    }
 
     /**
      * Retrieve all messages from the Message table.
@@ -84,25 +89,33 @@ public class MessageDAO {
      */
     public Message insertMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
-        try {
-            //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
-            //values (two columns total!)
-            String sql = "INSERT INTO Message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?);";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            //set the posted_by, message_text, and time_posted_epoch
-            preparedStatement.setInt(1, message.getPosted_by());
-            preparedStatement.setString(2, message.getMessage_text());
-            preparedStatement.setLong(3, message.getTime_posted_epoch());
+        //message_text is not blank,
+        //is under 255 characters,
+        //and posted_by refers to a real, existing user.
+        if (message.getMessage_text() != "" &&
+            message.getMessage_text().length() < 255 &&
+            accountDAO.getAccountById(message.getPosted_by()) != null){
+           try {
+                //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
+                //values (two columns total!)
+                String sql = "INSERT INTO Message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?);";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.executeUpdate();
-            ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-            if(pkeyResultSet.next()){
-                int generated_message_id = (int) pkeyResultSet.getLong(1);
-                return new Message(generated_message_id, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
+                //set the posted_by, message_text, and time_posted_epoch
+                preparedStatement.setInt(1, message.getPosted_by());
+                preparedStatement.setString(2, message.getMessage_text());
+                preparedStatement.setLong(3, message.getTime_posted_epoch());
+
+                preparedStatement.executeUpdate();
+                ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
+                if(pkeyResultSet.next()){
+                    int generated_message_id = (int) pkeyResultSet.getLong(1);
+                    return new Message(generated_message_id, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
+                }
+            }catch(SQLException e){
+                System.out.println(e.getMessage());
             }
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
         }
         return null;
     }
