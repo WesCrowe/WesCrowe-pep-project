@@ -1,5 +1,6 @@
 package Service;
 
+import Model.Account;
 import Model.Message;
 import DAO.MessageDAO;
 
@@ -66,11 +67,37 @@ public class MessageService {
      *         unsuccessful.
      */
     public Message updateMessage(int message_id, Message message){
+        //make sure the message exists
         if (messageDAO.getMessageById(message_id) == null){
             return null;
         }
         messageDAO.updateMessage(message_id, message);
         return messageDAO.getMessageById(message_id);
     }
-    
+
+    /**
+     * Use the MessageDAO to delete an existing message from the database.
+     *
+     * @param message_id the ID of the message to be modified.
+     * @param message an object containing all data that should replace the values contained by the existing message_id.
+     *         the message object does not contain an message ID.
+     * @return the newly updated message if the update operation was successful. Return null if the update operation was
+     *         unsuccessful.
+     */
+    public Message deleteMessage(Message message){
+        //make sure the message exists
+        if (messageDAO.getMessageById(message.getMessage_id()) == null){
+            return null;
+        }
+        return messageDAO.deleteMessage(message.getMessage_id());
+    }
+
+    /**
+     * Use the MessageDAO to retrieve all messages.
+     *
+     * @return all messages
+     */
+    public List<Message> getMessagesByAccount(Account account) {
+        return messageDAO.getAllMessagesPostedBy(account.getAccount_id());
+    }
 }
