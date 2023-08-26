@@ -53,9 +53,15 @@ public class AccountService {
      */
     public Account getAccountByUsernameAndPassword(Account account) {
         Account acc = getAccountByUsername(account);
+        
+        //check to make sure the username exists
+        if (acc == null){ return null; }
+
+        //check if the password matches
         if (acc.getPassword().compareTo(account.getPassword()) == 0){
             return acc;
         }
+        
         return null;
     }
 
