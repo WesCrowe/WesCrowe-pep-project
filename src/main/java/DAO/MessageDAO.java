@@ -55,9 +55,8 @@ public class MessageDAO {
         return messages;
     }
 
-
     /**
-     * Retrieve a specific message using its message ID.
+     * TODO: Retrieve a specific message using its message ID.
      *
      * @param id a message ID.
      */
@@ -130,7 +129,7 @@ public class MessageDAO {
 
 
     /**
-     * Update the message identified by the message id to the values contained in the message object.
+     * TODO: Update the message identified by the message id to the values contained in the message object.
      *
      * @param id a message ID.
      * @param message a message object. the message object does not contain a message ID.
@@ -154,7 +153,7 @@ public class MessageDAO {
     }
 
     /**
-     * delete a message identified by the message id.
+     * TODO: delete a message identified by the message id.
      *
      * @param id a message ID.
      */
@@ -184,9 +183,9 @@ public class MessageDAO {
     }
 
     /**
-     * Retrieve all messages from the Message table.
+     * TODO: Retrieve all messages from the Message table given a posted_by id.
      *
-     * @return all messages.
+     * @return all messages posted by the user with id that matches posted_by.
      */
     public List<Message> getAllMessagesPostedBy(int posted_by){
         Connection connection = ConnectionUtil.getConnection();

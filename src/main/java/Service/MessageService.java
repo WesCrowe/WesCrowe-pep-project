@@ -14,12 +14,14 @@ import java.util.List;
  */
 public class MessageService {
     private MessageDAO messageDAO;
+
     /**
      * no-args constructor for creating a new MessageService with a new MessageDAO.
      */
     public MessageService(){
         messageDAO = new MessageDAO();
     }
+
     /**
      * Constructor for an MessageService when an MessageDAO is provided.
      * This is used for when a mock MessageDAO that exhibits mock behavior is used in the test cases.
@@ -29,6 +31,7 @@ public class MessageService {
     public MessageService(MessageDAO messageDAO){
         this.messageDAO = messageDAO;
     }
+
     /**
      * Use the MessageDAO to retrieve all messages.
      *
@@ -39,7 +42,7 @@ public class MessageService {
     }
 
     /**
-     * Use the MessageDAO to retrieve a message with a specific ID.
+     * TODO: Use the MessageDAO to retrieve a message with a specific ID.
      *
      * @return all messages
      */
@@ -58,7 +61,7 @@ public class MessageService {
     }
 
     /**
-     * Use the MessageDAO to update an existing message from the database.
+     * TODO: Use the MessageDAO to update an existing message from the database.
      *
      * @param message_id the ID of the message to be modified.
      * @param message an object containing all data that should replace the values contained by the existing message_id.
@@ -76,7 +79,7 @@ public class MessageService {
     }
 
     /**
-     * Use the MessageDAO to delete an existing message from the database.
+     * TODO: Use the MessageDAO to delete an existing message from the database.
      *
      * @param message_id the ID of the message to be modified.
      * @param message an object containing all data that should replace the values contained by the existing message_id.
@@ -93,11 +96,14 @@ public class MessageService {
     }
 
     /**
-     * Use the MessageDAO to retrieve all messages.
+     * TODO: Use the MessageDAO to retrieve all messages of a particular account.
      *
-     * @return all messages
+     * @return all messages of the given account
      */
     public List<Message> getMessagesByAccount(Account account) {
         return messageDAO.getAllMessagesPostedBy(account.getAccount_id());
+    }
+    public List<Message> getMessagesByAccount(Message message) {
+        return messageDAO.getAllMessagesPostedBy(message.getPosted_by());
     }
 }

@@ -16,6 +16,7 @@ import Util.ConnectionUtil;
  * password varchar(255)
  */
 public class AccountDAO {
+
     /**
      * Retrieve all accounts from the account table.
      *
@@ -39,64 +40,6 @@ public class AccountDAO {
             System.out.println(e.getMessage());
         }
         return accounts;
-    }
-
-
-    /**
-     * Retrieve a specific account using its account ID.
-     *
-     * @param id an account ID.
-     */
-    public Account getAccountById(int id){
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            //SQL query
-            String sql = "SELECT * FROM Account WHERE Account.account_id=?;";
-            
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            //set the id
-            preparedStatement.setInt(1, id);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
-                                              rs.getString("password"));
-                return account;
-            }
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    /**
-     * Retrieve a specific account using its username.
-     *
-     * @param id an account ID.
-     */
-    public Account getAccountByUsername(String username){
-        Connection connection = ConnectionUtil.getConnection();
-        try {
-            //SQL Query
-            String sql = "SELECT * FROM Account WHERE Account.username=?;";
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            //set the username
-            preparedStatement.setString(1, username);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
-                                              rs.getString("password"));
-                return account;
-            }
-        }
-        catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return null;
     }
 
     /**
@@ -139,29 +82,60 @@ public class AccountDAO {
         return null;
     }
 
-
     /**
-     * Update the account identified by the account id to the values contained in the account object.
+     * Retrieve a specific account using its username.
      *
      * @param id an account ID.
-     * @param account an account object. the account object does not contain an account ID.
      */
-    public void updateAccount(int id, Account account){
+    public Account getAccountByUsername(String username){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            //Write SQL logic here
-            String sql = "UPDATE Account SET username=?, password=? WHERE Account.account_id = ?;";
+            //SQL Query
+            String sql = "SELECT * FROM Account WHERE Account.username=?;";
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            //Set the username, password, and id
-            preparedStatement.setString(1, account.getUsername());
-            preparedStatement.setString(2, account.getPassword());
-            preparedStatement.setInt(3, id);
+            //set the username
+            preparedStatement.setString(1, username);
 
-            preparedStatement.executeUpdate();
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
+                                              rs.getString("password"));
+                return account;
+            }
+        }
+        catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve a specific account using its account ID.
+     *
+     * @param id an account ID.
+     */
+    public Account getAccountById(int id){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            //SQL query
+            String sql = "SELECT * FROM Account WHERE Account.account_id=?;";
+            
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            //set the id
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
+                                              rs.getString("password"));
+                return account;
+            }
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        return null;
     }
-
 }
