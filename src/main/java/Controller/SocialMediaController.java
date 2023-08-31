@@ -117,6 +117,7 @@ public class SocialMediaController {
         if(loggedAccount == null){ ctx.status(401); }
         else{
             ctx.json(mapper.writeValueAsString(loggedAccount));
+            ctx.status(200);
         }
     }
 
@@ -129,6 +130,7 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
+        ctx.status(200);
     }
 
     /**
@@ -144,6 +146,7 @@ public class SocialMediaController {
         Message targetMessage = messageService.getMessageById(message);
 
         ctx.json(mapper.writeValueAsString(targetMessage));
+        ctx.status(200);
     }
 
     /**
@@ -159,6 +162,7 @@ public class SocialMediaController {
         if(addedMessage == null){ ctx.status(400); }
         else{
             ctx.json(mapper.writeValueAsString(addedMessage));
+            ctx.status(200);
         }
     }
 
@@ -174,11 +178,12 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         Message updatedMessage = messageService.updateMessage(message_id, message);
-        System.out.println(updatedMessage);
+        //System.out.println(updatedMessage);
         
         if(updatedMessage == null){ ctx.status(400); }
         else{
             ctx.json(mapper.writeValueAsString(updatedMessage));
+            ctx.status(200);
         }
     }
 
@@ -196,6 +201,8 @@ public class SocialMediaController {
         if ((targetMessage = messageService.deleteMessage(targetMessage)) != null){
             ctx.json(mapper.writeValueAsString(targetMessage));
         }
+
+        ctx.status(200);
     }
 
     /**
@@ -214,5 +221,6 @@ public class SocialMediaController {
         List<Message> messages = messageService.getMessagesByAccount(posted_by);
         
         ctx.json(messages);
+        ctx.status(200);
     }
 }
