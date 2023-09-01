@@ -56,7 +56,7 @@ public class MessageDAO {
     }
 
     /**
-     * TODO: Retrieve a specific message using its message ID.
+     * Retrieve a specific message using its message ID.
      *
      * @param id a message ID.
      */
@@ -129,25 +129,25 @@ public class MessageDAO {
 
 
     /**
-     * TODO: Update the message identified by the message id to the values contained in the message object.
+     * Update the message identified by the message id to the values contained in the message object.
      *
      * @param id a message ID.
      * @param message a message object. the message object does not contain a message ID.
      */
-    public void updateMessage(int id, Message message){
+    public void updateMessage(int message_id, Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "UPDATE Account SET message_text=?, time_posted_epoch=? WHERE Message.message_id = ?;";
+            String sql = "UPDATE message SET message_text=? WHERE message_id = ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //Set the message_text, time_posted_epoch, and id
             preparedStatement.setString(1, message.getMessage_text());
-            preparedStatement.setLong(2, message.getTime_posted_epoch());
-            preparedStatement.setInt(3, id);
+            preparedStatement.setInt(2, message_id);
 
             preparedStatement.executeUpdate();
-        }catch(SQLException e){
+        }
+        catch(SQLException e){
             System.out.println(e.getMessage());
         }
     }

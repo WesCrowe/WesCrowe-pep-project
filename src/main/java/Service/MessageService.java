@@ -42,7 +42,7 @@ public class MessageService {
     }
 
     /**
-     * TODO: Use the MessageDAO to retrieve a message with a specific ID.
+     * Use the MessageDAO to retrieve a message with a specific ID.
      *
      * @return all messages
      */
@@ -61,7 +61,7 @@ public class MessageService {
     }
 
     /**
-     * TODO: Use the MessageDAO to update an existing message from the database.
+     * Use the MessageDAO to update an existing message from the database.
      *
      * @param message_id the ID of the message to be modified.
      * @param message an object containing all data that should replace the values contained by the existing message_id.
@@ -70,10 +70,6 @@ public class MessageService {
      *         unsuccessful.
      */
     public Message updateMessage(int message_id, Message message){
-        //make sure the message exists
-        if (messageDAO.getMessageById(message_id) == null){
-            return null;
-        }
         messageDAO.updateMessage(message_id, message);
         return messageDAO.getMessageById(message_id);
     }

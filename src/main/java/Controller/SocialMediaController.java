@@ -132,7 +132,7 @@ public class SocialMediaController {
     }
 
     /**
-     * TODO: Handler to retrieve a message based on message_id.
+     * Handler to retrieve a message based on message_id.
      * 
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.put method.
@@ -140,11 +140,27 @@ public class SocialMediaController {
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
-        String id = ctx.path().substring(ctx.path().length()-1);
+        /* Get message id from path /messages/{message_id} */
+
+        //get the index where the last slash appears
+        int slashIndex = 0;
+        for (int i = ctx.path().length()-1; i > 0; i--){
+            if (ctx.path().charAt(i) == '/'){
+                slashIndex = i;
+            }
+        }
+
+        //get the substring starting from the index after the slash
+        //up to excluding the length of the path
+        String id = ctx.path().substring(slashIndex+1, ctx.path().length());
+
+        //turn the substring into an integer
         int message_id = Integer.parseInt(id);
+
+        //get the target message
         Message targetMessage = messageService.getMessageById(message_id);
 
-        //if the message exists, return it
+        //if the message exists, return it through the context
         if (targetMessage != null){
             ctx.json(mapper.writeValueAsString(targetMessage));
         }
@@ -167,7 +183,7 @@ public class SocialMediaController {
     }
 
     /**
-     * TODO: Handler to update a message.
+     * Handler to update a message.
      *
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.put method.
@@ -175,15 +191,46 @@ public class SocialMediaController {
      */
     private void updateMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Message message = mapper.readValue(ctx.body(), Message.class);
-        int message_id = Integer.parseInt(ctx.pathParam("message_id"));
-        Message updatedMessage = messageService.updateMessage(message_id, message);
-        //System.out.println(updatedMessage);
-        
-        if(updatedMessage == null){ ctx.status(400); }
-        else{
-            ctx.json(mapper.writeValueAsString(updatedMessage));
+
+        /* Get message id from path /messages/{message_id} */
+
+        //get the index where the last slash appears
+        int slashIndex = 0;
+        for (int i = ctx.path().length()-1; i > 0; i--){
+            if (ctx.path().charAt(i) == '/'){
+                slashIndex = i;
+            }
         }
+
+        //get the substring starting from the index after the last slash
+        //and ending exclusive of the path's total length
+        String id = ctx.path().substring(slashIndex+1, ctx.path().length());
+
+        //turn the substring into an integer
+        int message_id = Integer.parseInt(id);
+
+        //get the message with a matching id
+        Message targetMessage = messageService.getMessageById(message_id);
+
+        //get the updated message information
+        Message message = mapper.readValue(ctx.body(), Message.class);
+
+        /* Update the message */
+
+        //make sure the message exists and
+        //the new message_text is not blank and
+        //the new message_text is not over 255 characters
+        if (targetMessage != null &&
+            message.getMessage_text() != "" &&
+            message.getMessage_text().length() < 255){
+
+                //write the updated message into the database
+                Message updatedMessage = messageService.updateMessage(message_id, message);
+
+                //write the updated message into the return body
+                ctx.json(mapper.writeValueAsString(updatedMessage));
+            }
+        else{ ctx.status(400); }
     }
 
     /**
