@@ -60,15 +60,15 @@ public class MessageDAO {
      *
      * @param id a message ID.
      */
-    public Message getMessageById(int id){
+    public Message getMessageById(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try {
             //SQL query
-            String sql = "SELECT * FROM Message WHERE Message.message_id=?;";
+            String sql = "SELECT * FROM message WHERE message_id=?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //set the id
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, message_id);
 
             //execute the query
             ResultSet rs = preparedStatement.executeQuery();
@@ -187,7 +187,7 @@ public class MessageDAO {
      *
      * @return all messages posted by the user with id that matches posted_by.
      */
-    public List<Message> getAllMessagesPostedBy(int posted_by){
+    public List<Message> getAllMessagesPostedBy(int account_id){
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
         try {
@@ -196,7 +196,7 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //set the posted_by
-            preparedStatement.setInt(1, posted_by);
+            preparedStatement.setInt(1, account_id);
 
             //execute the query
             ResultSet rs = preparedStatement.executeQuery();

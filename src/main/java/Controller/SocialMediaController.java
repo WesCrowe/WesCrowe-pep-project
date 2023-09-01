@@ -117,7 +117,6 @@ public class SocialMediaController {
         if(loggedAccount == null){ ctx.status(401); }
         else{
             ctx.json(mapper.writeValueAsString(loggedAccount));
-            ctx.status(200);
         }
     }
 
@@ -130,7 +129,6 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
-        ctx.status(200);
     }
 
     /**
@@ -142,11 +140,14 @@ public class SocialMediaController {
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
-        Message message = mapper.readValue(ctx.body(), Message.class);
-        Message targetMessage = messageService.getMessageById(message);
+        String id = ctx.path().substring(ctx.path().length()-1);
+        int message_id = Integer.parseInt(id);
+        Message targetMessage = messageService.getMessageById(message_id);
 
-        ctx.json(mapper.writeValueAsString(targetMessage));
-        ctx.status(200);
+        //if the message exists, return it
+        if (targetMessage != null){
+            ctx.json(mapper.writeValueAsString(targetMessage));
+        }
     }
 
     /**
@@ -162,7 +163,6 @@ public class SocialMediaController {
         if(addedMessage == null){ ctx.status(400); }
         else{
             ctx.json(mapper.writeValueAsString(addedMessage));
-            ctx.status(200);
         }
     }
 
@@ -183,7 +183,6 @@ public class SocialMediaController {
         if(updatedMessage == null){ ctx.status(400); }
         else{
             ctx.json(mapper.writeValueAsString(updatedMessage));
-            ctx.status(200);
         }
     }
 
@@ -201,8 +200,6 @@ public class SocialMediaController {
         if ((targetMessage = messageService.deleteMessage(targetMessage)) != null){
             ctx.json(mapper.writeValueAsString(targetMessage));
         }
-
-        ctx.status(200);
     }
 
     /**
@@ -217,10 +214,12 @@ public class SocialMediaController {
         //Account targetAccount = mapper.readValue(ctx.body(), Account.class);
         //List<Message> messages = messageService.getMessagesByAccount(targetAccount);
 
-        Message posted_by = mapper.readValue(ctx.body(), Message.class);
-        List<Message> messages = messageService.getMessagesByAccount(posted_by);
+        //Message posted_by = mapper.readValue(ctx.body(), Message.class);
+        //List<Message> messages = messageService.getMessagesByAccount(posted_by);
+
+        Account account = mapper.readValue(ctx.endpointHandlerPath(), Account.class);
+        List<Message> messages = messageService.getMessagesByAccount(account);
         
         ctx.json(messages);
-        ctx.status(200);
     }
 }
