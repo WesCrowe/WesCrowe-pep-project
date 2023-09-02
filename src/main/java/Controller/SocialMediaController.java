@@ -93,11 +93,22 @@ public class SocialMediaController {
     private void addAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
-        Account addedAccount = accountService.addAccount(account);
         
-        if(addedAccount == null){ ctx.status(400); }
+        //username is not blank and
+        //the password is at least 4 characters long and
+        //and an Account with that username does not already exist.
+        System.out.println(accountService.getAccountByUsername(account));
+        if (account.getUsername() != "" &&
+            account.getPassword().length() > 3 &&
+            accountService.getAccountByUsername(account) == null){
+                
+                //add account and return it through context
+                Account addedAccount = accountService.addAccount(account);
+                ctx.json(mapper.writeValueAsString(addedAccount));
+        }
         else{
-            ctx.json(mapper.writeValueAsString(addedAccount));
+            //ctx.json(mapper.writeValueAsString(addedAccount));
+            ctx.status(400);
         }
     }
 
@@ -176,10 +187,19 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
         
-        if(addedMessage == null){ ctx.status(400); }
-        else{
+        //the posted message is not null and
+        //message_text is not blank and
+        //is under 255 characters and
+        //posted_by refers to a real, existing user.
+        if (addedMessage != null &&
+            message.getMessage_text() != "" &&
+            message.getMessage_text().length() < 255 &&
+            accountService.getAccountById(message.getPosted_by()) != null){
+            
+            //add the message
             ctx.json(mapper.writeValueAsString(addedMessage));
         }
+        else{ ctx.status(400); }
     }
 
     /**

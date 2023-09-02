@@ -60,6 +60,18 @@ public class AccountService {
     }
 
     /**
+     * Use the AccountDAO to retrieve an account by id.
+     *
+     * @return account with matching id
+     */
+    public Account getAccountById(Account account) {
+        return accountDAO.getAccountById(account.getAccount_id());
+    }
+    public Account getAccountById(int account_id) {
+        return accountDAO.getAccountById(account_id);
+    }
+
+    /**
      * Use the AccountDAO to retrieve an account by username and password
      *
      * @return account with matching username and password. If unsuccessful, return null
