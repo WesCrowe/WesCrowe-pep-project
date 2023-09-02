@@ -75,7 +75,7 @@ public class MessageService {
     }
 
     /**
-     * TODO: Use the MessageDAO to delete an existing message from the database.
+     * Use the MessageDAO to delete an existing message from the database.
      *
      * @param message_id the ID of the message to be modified.
      * @param message an object containing all data that should replace the values contained by the existing message_id.
@@ -99,7 +99,7 @@ public class MessageService {
     public List<Message> getMessagesByAccount(Account account) {
         return messageDAO.getAllMessagesPostedBy(account.getAccount_id());
     }
-    public List<Message> getMessagesByAccount(Message message) {
-        return messageDAO.getAllMessagesPostedBy(message.getPosted_by());
+    public List<Message> getMessagesByAccount(int account_id) {
+        return messageDAO.getAllMessagesPostedBy(account_id);
     }
 }

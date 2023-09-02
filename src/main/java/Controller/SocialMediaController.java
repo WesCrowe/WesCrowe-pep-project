@@ -107,7 +107,6 @@ public class SocialMediaController {
                 ctx.json(mapper.writeValueAsString(addedAccount));
         }
         else{
-            //ctx.json(mapper.writeValueAsString(addedAccount));
             ctx.status(400);
         }
     }
@@ -254,18 +253,39 @@ public class SocialMediaController {
     }
 
     /**
-     * TODO: Handler to delete a message based on message_id.
+     * Handler to delete a message based on message_id.
      * 
      * @param ctx the context object handles information HTTP requests and generates responses within Javalin. It will
      *            be available to this method automatically thanks to the app.put method.
      */
     private void deleteMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        
+        /* Get message id from path /messages/{message_id} */
 
-        Message targetMessage = mapper.readValue(ctx.body(), Message.class);
+        //get the index where the last slash appears
+        int slashIndex = 0;
+        for (int i = ctx.path().length()-1; i > 0; i--){
+            
+            if (ctx.path().charAt(i) == '/'){ slashIndex = i; }
 
-        if ((targetMessage = messageService.deleteMessage(targetMessage)) != null){
+        }
+
+        //get the substring starting from the index after the slash
+        //up to excluding the length of the path
+        String id = ctx.path().substring(slashIndex+1, ctx.path().length());
+
+        //turn the substring into an integer
+        int message_id = Integer.parseInt(id);
+
+        //get the target message
+        Message targetMessage = messageService.getMessageById(message_id);
+
+        //if the message exists, return it through the context and delete it
+        if (targetMessage != null){
+            /* Tried to turn this into one line, but this works just as well */
             ctx.json(mapper.writeValueAsString(targetMessage));
+            messageService.deleteMessage(targetMessage);
         }
     }
 
@@ -278,15 +298,32 @@ public class SocialMediaController {
     private void getAllMessagesOfAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
-        //Account targetAccount = mapper.readValue(ctx.body(), Account.class);
-        //List<Message> messages = messageService.getMessagesByAccount(targetAccount);
+        /* Get account id from path /accounts/{account_id}/messages */
 
-        //Message posted_by = mapper.readValue(ctx.body(), Message.class);
-        //List<Message> messages = messageService.getMessagesByAccount(posted_by);
+        //get the indexes where the account number appears
+        int slashes = 0;
+        int slashIndex1 = -1;
+        int slashIndex2 = -1;
+        for (int i = 0; i < ctx.path().length(); i++){
 
-        Account account = mapper.readValue(ctx.endpointHandlerPath(), Account.class);
-        List<Message> messages = messageService.getMessagesByAccount(account);
+            if (ctx.path().charAt(i) == '/'){ slashes++; }
+
+            //only grab the slashes' indexes
+            if (slashes > 1 && slashIndex1 < 0){ slashIndex1 = i; }
+            if (slashes > 2 && slashIndex2 < 0){ slashIndex2 = i; }
+        }
+
+        //get the substring starting from the index after the slash
+        //up to excluding the index of the last slash
+        String id = ctx.path().substring(slashIndex1+1, slashIndex2);
+
+        //turn the substring into an integer
+        int account_id = Integer.parseInt(id);
+
+        //get the messages
+        List<Message> messages = messageService.getMessagesByAccount(account_id);
         
+        //return the messages through the context body
         ctx.json(messages);
     }
 }

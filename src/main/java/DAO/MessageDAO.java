@@ -134,6 +134,7 @@ public class MessageDAO {
             preparedStatement.setString(1, message.getMessage_text());
             preparedStatement.setInt(2, message_id);
 
+            //update the message
             preparedStatement.executeUpdate();
         }
         catch(SQLException e){
@@ -142,7 +143,7 @@ public class MessageDAO {
     }
 
     /**
-     * TODO: delete a message identified by the message id.
+     * delete a message identified by the message id.
      *
      * @param id a message ID.
      */

@@ -28,8 +28,9 @@ public class AccountDAO {
         try {
             //SQL query
             String sql = "SELECT * FROM account;";
-
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            //get the result set of accounts
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
@@ -39,6 +40,7 @@ public class AccountDAO {
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        
         return accounts;
     }
 
@@ -87,12 +89,12 @@ public class AccountDAO {
         try {
             //SQL Query
             String sql = "SELECT * FROM account WHERE username=?;";
-
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //set the username
             preparedStatement.setString(1, username);
 
+            //get the result set and return the account
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
@@ -116,12 +118,12 @@ public class AccountDAO {
         try {
             //SQL query
             String sql = "SELECT * FROM account WHERE account_id=?;";
-            
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //set the id
             preparedStatement.setInt(1, id);
 
+            //get the result set and return the account
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
